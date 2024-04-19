@@ -110,6 +110,7 @@ namespace BP3Casus_Console_Fix.Users.Service
             }
             return null;
         }
+
         public Participant? GetParticipantById(int userId)
         {
             Participant? participant = null;
@@ -152,6 +153,54 @@ namespace BP3Casus_Console_Fix.Users.Service
 
             return participant;
         }
+        public Participant? GetParticipantByUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("Username cannot be null or empty.");
+            }
+
+            Participant? participant = null;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+            SELECT u.*, p.GeneralLevel, p.GeneralExperience
+            FROM Users u
+            INNER JOIN Participants p ON u.Id = p.UserId
+            WHERE u.Username = @Username";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            participant = new Participant(
+                                reader["Username"].ToString(),
+                                reader["Password"].ToString(), // Note: Handle passwords securely
+                                reader["Email"].ToString(),
+                                reader["FirstName"].ToString(),
+                                reader["LastName"].ToString(),
+                                (DateTime)reader["DateOfBirth"]
+                            )
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                GeneralLevel = reader.GetInt32(reader.GetOrdinal("GeneralLevel")),
+                                GeneralExperience = reader.GetDouble(reader.GetOrdinal("GeneralExperience"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return participant;
+        }
+
 
         public Coach? GetCoachById(int userId)
         {
@@ -194,6 +243,53 @@ namespace BP3Casus_Console_Fix.Users.Service
 
             return coach;
         }
+        public Coach? GetCoachByUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("Username cannot be null or empty.");
+            }
+
+            Coach? coach = null;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+            SELECT u.*, c.Expertise
+            FROM Users u
+            INNER JOIN Coaches c ON u.Id = c.UserId
+            WHERE u.Username = @Username";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Username", username);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            coach = new Coach(
+                                reader["Username"].ToString(),
+                                reader["Password"].ToString(), // Handling passwords should be secure
+                                reader["Email"].ToString(),
+                                reader["FirstName"].ToString(),
+                                reader["LastName"].ToString(),
+                                (DateTime)reader["DateOfBirth"],
+                                (Coach.AreaOfExpertise)Enum.Parse(typeof(Coach.AreaOfExpertise), reader["Expertise"].ToString())
+                            )
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return coach;
+        }
+
 
         public User CreateUser(string username, string password, string email, string firstName, string lastName, DateTime dateOfBirth, User.UserType userType)
         {
@@ -209,6 +305,7 @@ namespace BP3Casus_Console_Fix.Users.Service
             AddUser(user);
             return user;
         }
+
         public void AddUser(User user)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
