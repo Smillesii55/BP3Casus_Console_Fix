@@ -597,6 +597,119 @@ namespace BP3Casus_Console_Fix
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
 
+
+            switch (CurrentUser.Type)
+            {
+                case User.UserType.Participant:
+                    ParticipantMenu(CurrentUser as Participant);
+                    break;
+                case User.UserType.Coach:
+                    CoachMenu(CurrentUser as Coach);
+                    break;
+                default:
+                    break;
+            }
+
+
+            // If the user is a participant, show the User menu
+            // the user menu should have the following options:
+
+            // 1. events
+            // 1.1. view events
+            // 1.1.1. A way to register for an event
+            // 1.2. view my events
+            // 1.2.1. A way to unregister for an event
+            // 2. friends
+            // 2.1. view friends
+            // 2.2. add friend
+            // 2.3. remove friend
+            // 3. progress
+            // 3.1. view progress
+            // 4. Log out
+            void ParticipantMenu(Participant participant)
+            {
+                bool running = true;
+                while (running)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Participant menu");
+                    Console.WriteLine();
+                    Console.WriteLine("1. Events");
+                    Console.WriteLine("2. Friends");
+                    Console.WriteLine("3. Progress");
+                    Console.WriteLine("4. Log out");
+                    Console.WriteLine();
+                    Console.Write("Select an option: ");
+                    string option = Console.ReadLine();
+
+                    switch (option)
+                    {
+                        case "1":
+                            //EventsMenu(participant);
+                            break;
+                        case "2":
+                            //FriendsMenu(participant);
+                            break;
+                        case "3":
+                            //ProgressMenu(participant);
+                            break;
+                        case "4":
+                            running = false;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid input. Press any key to try again.");
+                            Console.ReadKey();
+                            break;
+                    }
+                }
+            }
+
+
+            // If the user is a coach, show the Coach menu
+            // the coach menu should have the following options:
+
+            // 1. events
+            // 1.1. view events
+            // 1.1.1. A way to create an event
+            // 1.2. view my events
+            // 1.2.1. A way to delete an event
+            // 2. Evaluate participants
+            // 2.1. view participants
+            // 2.1.1 evaluate participant
+            // 3. log out
+            void CoachMenu(Coach coach)
+            {
+                bool running = true;
+                while (running)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Coach menu");
+                    Console.WriteLine();
+                    Console.WriteLine("1. Events");
+                    Console.WriteLine("2. Evaluate participants");
+                    Console.WriteLine("3. Log out");
+                    Console.WriteLine();
+                    Console.Write("Select an option: ");
+                    string option = Console.ReadLine();
+
+                    switch (option)
+                    {
+                        case "1":
+                            //EventsMenu(coach);
+                            break;
+                        case "2":
+                            //EvaluateParticipantsMenu(coach);
+                            break;
+                        case "3":
+                            running = false;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid input. Press any key to try again.");
+                            Console.ReadKey();
+                            break;
+                    }
+                }
+            }
         }
     }
 }
